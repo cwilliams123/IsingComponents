@@ -1,0 +1,90 @@
+<!--
+Instead of rebuilding nearest neighbor hash (incase that is indeed 
+what is being done) write in method to only refresh hashmap when Size 
+is changed.
+Note: colorSquare commented out for debugging purposes and test Size is 10
+-->
+<html>
+<script>
+
+Size = 10
+
+var s = new Array(Size); 
+var upSpin = new Array() ;
+var downSpin = new Array(); 
+	 for (var i = 0; i < Size; i++){
+                s[i] = new Array(Size);
+                for (var j = 0; j < Size; j++){
+                    if(Math.random() < 0.5)
+                        s[i][j] = 1;
+                   else s[i][j] = -1;
+                   //colorSquare(i, j); 	
+                    	}
+                    	}
+                     
+
+	
+       
+nearestneighs = {};  
+       
+        for (var m = 0; m < Size; m++){
+                for (var n = 0; n < Size; n++){
+                        var pair = [];
+                        var indexNeighs = [];
+                        var ordered = [m,n];
+                        for(var zz = 0; zz < 4; zz++){ //'von Neumann neighborhood' = 4 nearest neighbor interactions
+                        if(zz==0){  //look up
+                        	if (m == 0){
+                        		pair = [9,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{pair = [m-1,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        		}
+                        	
+                         if(zz==1){   //look down
+                        	if (m == 9){ 
+                        		pair = [0,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m+1,n];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}
+                        if(zz==2){    //look left
+                        	if (n == 0){ 
+                        		pair = [m,9];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m,n-1];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}
+                        	if(zz==3){ //look right
+                        	if (n == 9){
+                        		pair = [m,0];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m,n+1];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}	
+                        	nearestneighs[ordered] = indexNeighs	
+                        	}
+                        	
+                        	
+                        		}
+                        		}
+                                                 		
+                     	               
+if (true) {
+  console.log(nearestneighs);
+} 
+
+
+</script>
+</html>
