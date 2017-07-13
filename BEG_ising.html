@@ -1,0 +1,33 @@
+<html>
+<script>
+
+Size = 10
+
+            var s = new Array(Size); 
+            for (var i = 0; i < Size; i++){
+                s[i] = new Array(Size);
+                for (var j = 0; j < Size; j++){
+                    rand = Math.random()
+                    if(true){
+console.log(rand)
+}
+                    if(rand <= 0.33){
+                        s[i][j] = 1;
+                        }
+                    if(rand > 0.33 && rand <= 0.66){
+                        s[i][j] = -1;
+                    	}
+                    if(rand > 0.66){
+                    	s[i][j] = 0
+                    	}	
+                    //colorSquare(i, j);
+                    }
+                    
+                }
+                
+if(true){
+console.log(s)
+}
+
+</script>
+</html>
