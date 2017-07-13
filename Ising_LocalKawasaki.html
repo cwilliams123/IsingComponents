@@ -28,7 +28,9 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
             
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    
     </head>
+    
     <body>
         <div>
             <h1> Ising Model </h1>
@@ -76,7 +78,26 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                    </tbody>
                </table>
             </div>
-            
+            <div id="chart" class="styles1"></div>
+<button id="toggle">Switch Styles</button>
+<script>
+  var chart = $('#chart').epoch({
+    type: 'time.area',
+    data: []
+  });
+
+  // The button swtiches the chart's class from styles1 to styles2 and back
+  $('#toggle').click(function (e) {
+    // This switches the class names...
+    var className = $('#chart').attr('class');
+    var newClassName = className === 'styles1' ? 'styles2' : 'styles1';
+    $('#chart').removeClass(className).addClass(newClassName);
+
+    // And this is required to see the updated styles...
+    chart.redraw();
+  });
+</script>
+
             <p> <b> Nanotube Settings: </b></p>
             <div>Thickness: <input type ="number" id ="nThicknessInput" value = "2" min ="0" max ="150"/> </div>
             <div>Diameter: <input type ="number" id ="nDiameterInput" value = "15" min ="0" max ="298"/> </div>
@@ -231,11 +252,15 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
             //algorithm
             algorithmSelect.selectedIndex = 0; //default is metropolis
             var metropolis;
-            if (algorithmSelect.value == "Metropolis")
+            if (algorithmSelect.value == "Metropolis"){
                 metropolis = true;
-            else
-                metropolis = false; //runs kawasaki
-            
+                }
+            if (algorithmSelect.value == "Kawasaki(Local)"){
+                klocal = true;
+                }
+            else{
+            	stop(); //stops simulation
+            }
             //boundary conditions
             boundarySelect.selectedIndex = 0; //default is regular pbc
             var pbc = true; 
@@ -272,14 +297,64 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                 for (var j = 0; j < Size; j++){
                     if(Math.random() < 0.5)
                         s[i][j] = 1;
-                    
                     else
                         s[i][j] = -1;
-                    
                     colorSquare(i, j);
                     }
-                    
                 }
+                			          
+var nearestneighs = new Object();  
+       
+        for (var m = 0; m < Size; m++){
+                for (var n = 0; n < Size; n++){
+                        var pair = [];
+                        var indexNeighs = [];
+                        var ordered = [m,n];
+                        for(var zz = 0; zz < 4; zz++){
+                        if(zz==0){  //look up
+                        	if (m == 0){
+                        		pair = [Size-1,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{pair = [m-1,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        		}
+                        	
+                         if(zz==1){   //look down
+                        	if (m == Size-1){ 
+                        		pair = [0,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m+1,n];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}
+                        if(zz==2){    //look left
+                        	if (n == 0){ 
+                        		pair = [m,Size-1];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m,n-1];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}
+                        	if(zz==3){ //look right
+                        	if (n == Size-1){
+                        		pair = [m,0];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m,n+1];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}	
+                        	nearestneighs[[m,n]] = indexNeighs;
+                        	}
+                        		}
+                        		}
            //these will be defined when someone saves a configuration so that the user can easily go back to the initial saved configuration     
             var initS;
             var initBfieldM;
@@ -342,61 +417,7 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
             }
             
             
-            
-var nearestneighs = {};  
-       
-        for (var m = 0; m < Size; m++){
-                for (var n = 0; n < Size; n++){
-                        var pair = [];
-                        var indexNeighs = [];
-                        var ordered = [m,n];
-                        for(var zz = 0; zz < 4; zz++){
-                        if(zz==0){  //look up
-                        	if (m == 0){
-                        		pair = [Size-1,n];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{pair = [m-1,n];
-                        		indexNeighs.push(pair);
-                        		}
-                        		}
-                        	
-                         if(zz==1){   //look down
-                        	if (m == Size-1){ 
-                        		pair = [0,n];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{
-                        		pair = [m+1,n];	
-                        		indexNeighs.push(pair);
-                        	}
-                        	}
-                        if(zz==2){    //look left
-                        	if (n == 0){ 
-                        		pair = [m,Size-1];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{
-                        		pair = [m,n-1];	
-                        		indexNeighs.push(pair);
-                        	}
-                        	}
-                        	if(zz==3){ //look right
-                        	if (n == Size-1){
-                        		pair = [m,0];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{
-                        		pair = [m,n+1];	
-                        		indexNeighs.push(pair);
-                        	}
-                        	}	
-                        	nearestneighs[[m,n]] = indexNeighs	
-                        	}
-                        	
-                        	
-                        		}
-                        		}
+  
             
             
           
@@ -976,6 +997,59 @@ var nearestneighs = {};
                         colorSquare(iNew, jNew);
                     }
                 }
+        
+        nearestneighs = new Object();  
+       
+        for (var m = 0; m < Size; m++){
+                for (var n = 0; n < Size; n++){
+                        var pair = [];
+                        var indexNeighs = [];
+                        var ordered = [m,n];
+                        for(var zz = 0; zz < 4; zz++){
+                        if(zz==0){  //look up
+                        	if (m == 0){
+                        		pair = [Size-1,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{pair = [m-1,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        		}
+                        	
+                         if(zz==1){   //look down
+                        	if (m == Size-1){ 
+                        		pair = [0,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m+1,n];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}
+                        if(zz==2){    //look left
+                        	if (n == 0){ 
+                        		pair = [m,Size-1];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m,n-1];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}
+                        	if(zz==3){ //look right
+                        	if (n == Size-1){
+                        		pair = [m,0];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m,n+1];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}	
+                        	nearestneighs[[m,n]] = indexNeighs;
+                        	}
+                        		}
+                        		}
                 resetData();
                     
                 if (metropolis)
@@ -1419,3 +1493,4 @@ var nearestneighs = {};
         </script>
     </body>
 </html>
+
