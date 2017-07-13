@@ -78,25 +78,7 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                    </tbody>
                </table>
             </div>
-            <div id="chart" class="styles1"></div>
-<button id="toggle">Switch Styles</button>
-<script>
-  var chart = $('#chart').epoch({
-    type: 'time.area',
-    data: []
-  });
-
-  // The button swtiches the chart's class from styles1 to styles2 and back
-  $('#toggle').click(function (e) {
-    // This switches the class names...
-    var className = $('#chart').attr('class');
-    var newClassName = className === 'styles1' ? 'styles2' : 'styles1';
-    $('#chart').removeClass(className).addClass(newClassName);
-
-    // And this is required to see the updated styles...
-    chart.redraw();
-  });
-</script>
+    
 
             <p> <b> Nanotube Settings: </b></p>
             <div>Thickness: <input type ="number" id ="nThicknessInput" value = "2" min ="0" max ="150"/> </div>
