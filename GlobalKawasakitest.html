@@ -273,17 +273,29 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                			    colorSquare(i, j); 	
                			     	}
                 			}
+             var upSpin = new Object();
+		   	 var downSpin = new Object();
+		   	 //var allSpins = new Object();
+		   	 var ups = 0;
+		   	 var downs = 0;
+           		for (var m = 0; m < Size; m++){
+        			for (var n = 0; n < Size; n++){
+      		    		if(s[m][n] > 0){
+                	    	var ordered = [m,n];                        	
+                	    	upSpin[ups] = ordered;
+                	    	//allSpins[m+n] = [ordered,1];
+                	    	ups= ups +1;
+                	    	} 
+                	    	else {
+                  			var ordered = [m,n];
+                   			downSpin[downs] = ordered;
+                   			//allSpins[m+n] = [ordered,-1];
+        					downs = downs+1;
+                    			}
+                    		}
+                    	}     			
                 			
-             //for (var m = 0; m < Size; m++){
-        	//	for (var n = 0; n < Size; n++){
-      		  //        if(s[m][n] > 0){
-                //    	var ordered = [m,n];                        	upSpin.push(ordered)
-                  //		 } else {
-                  	//		var ordered = [m,n];
-                   		//	 downSpin.push(ordered);
-                    		//	}
-                    		//}
-                    	//}
+            
 					
            //these will be defined when someone saves a configuration so that the user can easily go back to the initial saved configuration     
             var initS;
@@ -345,32 +357,30 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                 InnerLoopCount++;
                 
             }
-            
-           
-           var upSpin = new Array() 
-		   var downSpin = new Array() 
-           	for (var m = 0; m < Size; m++){
-        		for (var n = 0; n < Size; n++){
-      		    	if(s[m][n] > 0){
-                    	var ordered = [m,n];                        	
-                    	upSpin.push(ordered);
-                  		 } else {
-                  			var ordered = [m,n];
-                   			downSpin.push(ordered);
-                    			}
-                    		}
-                    	}   
+         
+        
+       
              
         function MetropolisforKawasaki(){
-
                 for(var step = 0; step <StepsPerLoop; step++){
-                
-                    mix1 = upSpin[Math.floor(Math.random()*upSpin.length)];
-              		mix2 = downSpin[Math.floor(Math.random()*downSpin.length)]; 
-                    var i1 = mix1[0];
-                    var j1 = mix1[1];
-                    var i2 = mix2[0];
-                    var j2 = mix2[1];
+                	var keyup = Math.floor(Math.random()*ups);
+                	var keydown = Math.floor(Math.random()*downs);
+                	var randUp= upSpin[keyup];
+                	var randDown= downSpin[keydown];
+                    //if(true){
+                   // console.log('up',Object.keys(upSpin).length);
+                   // }
+                   // if(true){
+                   // console.log('down',Object.keys(downSpin).length);
+                   // }
+        			var i1 = randUp[0];
+        			var j1 = randUp[1];
+                    var i2 = randDown[0];
+                    var j2 = randDown[1];
+                    //var i1 = Math.floor(Math.random()*Size);
+                    //var j1 = Math.floor(Math.random()*Size);
+                    //var i2 = Math.floor(Math.random()*Size);
+                    //var j2 = Math.floor(Math.random()*Size); 
                 	var thisS = s[i1][j1];
                 	var thatS = s[i2][j2];
                     var EdiffforM = deltaUforKawasakiforM(i1, j1, i2, j2);
@@ -379,8 +389,10 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                            if((EdiffforM < 0.0) || ((EdiffforM == 0) && (Math.random() < .5))){ //always flip if deltaU is negative
                                thisS *= -1;
                                s[i1][j1] = thisS;
+                               upSpin[keyup] = [i2,j2];
                                thatS *= -1;
                                s[i2][j2] = thatS;
+                               downSpin[keydown]=[i1,j1];
                                colorSquare(i1, j1);
                                colorSquare(i2, j2);
                                Ecurrent += Ediff;
@@ -390,21 +402,25 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                     else if ((EdiffforM <= 0.0) || (Math.random() < Math.exp((-EdiffforM)/T))){
                             thisS *= -1;
                             s[i1][j1] = thisS;
+                            upSpin[keyup] = [i2,j2];
                             thatS *= -1;
                             s[i2][j2] = thatS;
+                            downSpin[keydown]=[i1,j1];
                             colorSquare(i1, j1);
                             colorSquare(i2, j2);
                             Ecurrent += Ediff;
                             Mcurrent += ((2*thisS) + (2*thatS));
-                        }    
+                        }
+                    }
+                }
                 // var rem1 = upSpin.indexOf([i1,j1]);
 				// upSpin.splice(rem1, 1);    
 				// downSpin.push(rem1);
 				// var rem2 = downSpin.indexOf([i2,j2]);
 				// downSpin.splice(rem2, 1);    
 				// upSpin.push(rem2);
-                }
-                } 
+                
+                
                 
             
             
@@ -475,12 +491,10 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
             function deltaUforKawasakiforM(i1, j1, i2, j2){
                 var thisS = s[i1][j1];
                 var thatS = s[i2][j2];
-                
                 var left1 = getLeft(i1,j1);
                 var right1 = getRight(i1,j1);
                 var top1 = getTop(i1,j1);
                 var bottom1 = getBottom(i1,j1);
-                
                 var left2 = getLeft(i2,j2);
                 var right2 = getRight(i2,j2);
                 var top2 = getTop(i2,j2);
@@ -918,10 +932,15 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                 SquareWidth = canvas.width / Size;
                 // Now re-create the spin array, down-sampling from temporary array
                 s = new Array(Size);
-                        BfieldM = new Array(Size);
+                BfieldM = new Array(Size);
+                upSpin = new Object();
+		   	    downSpin = new Object();
+		   	  	 	
+                			
+                    	
                 for (var iNew=0; iNew<Size; iNew++) {
                     s[iNew] = new Array(Size);
-                                    BfieldM[iNew] = new Array(Size);
+                    BfieldM[iNew] = new Array(Size);
                     for (var jNew=0; jNew<Size; jNew++) {
                         var sTotal = 0;
                                                 //iterates through one square in the new lattice
@@ -932,18 +951,28 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                         }
                         if (sTotal > 0) {
                             s[iNew][jNew] = 1;// average determines down-sampled value of that square
+                            //upSpin[iNew+jNew]=[iNew,jNew]
                         } 
                         else if (sTotal < 0) {
                             s[iNew][jNew] = -1;
+                            //downSpin[iNew+jNew]=[iNew,jNew]
                         } 
                         else { // resolve ties with a random number
-                            if (Math.random() < 0.5) s[iNew][jNew] = 1; 
-                            else s[iNew][jNew] = -1;
+                            if (Math.random() < 0.5){
+                            s[iNew][jNew] = 1; 
+                           // upSpin[iNew+jNew]=[iNew,jNew];
+                            }
+                            else{
+                            s[iNew][jNew] = -1;
+                           // downSpin[iNew+jNew]=[iNew,jNew]
+                        }
                         }
                         BfieldM[iNew][jNew] = 0;
                         colorSquare(iNew, jNew);
                     }
                 }
+                   			
+                
                 resetData();
                     
                 if (metropolis)
