@@ -1,34 +1,144 @@
-<html>
-<script>
+<!DOCTYPE HTML>
+<!--
+BEG-Model, spin-1 systems where S_i = +1,-1,or 0 
+-->
 
-Size = 10
+<html>  
+
+<head>
+    <meta charset="utf-8">
+    <title>Blume-Emery-Griffiths Model, spin-1 Ising Model</title>
+</head>
+
+<body style="width:550px; margin-left:auto; margin-right:auto; background-color:#c0c0c0;">
+
+<h2 style="text-align:center;">Blume-Emery-Griffiths Model, spin-1 Ising Model</h2>
+
+<div style="width:500px; margin-left:auto; margin-right:auto;">
+    <canvas id="theCanvas" width="500" height="500">
+        Canvas not supported; please update your browser.
+    </canvas>
+</div>
+
+<div style="text-align:center;">
+    Temperature = <span id="tempReadout">2.27</span> 
+    <input id="tempSlider" type="range" min="0.01" max="9.99" step="0.01" value="2.27" 
+                oninput="showTemp();" onchange="showTemp();" style="width:180px"/>
+    <input id="startButton" type="button" onclick="startStop()" value="  Start  " style="font-Size:large;"/>
+</div>
+
+<script>
+ 	var mobile = navigator.userAgent.match(/iPhone|iPad|iPod|Android|BlackBerry|Opera Mini|IEMobile/i)
+    var Size = 100;                             // lattice dimension in each direction (must divide canvas Size)
+    if (mobile) Size = 50;                      // smaller works better on mobile platforms
+    var canvas = document.getElementById('theCanvas');
+    var context = canvas.getContext('2d');
+    var squareWidth = canvas.width / Size;      // width of each lattice site in pixels
+    var stepsPerFrame = 10000;                  // 1000 works well on iPhone 4; 10000 is better on a real computer
+    if (mobile) stepsPerFrame = 1000;           // again, optimize a bit for mobile
+    var running = false;                        // will be true when running
+    var startButton = document.getElementById('startButton');
+    var tempSlider  = document.getElementById('tempSlider');
+    var tempReadout = document.getElementById('tempReadout');
+	var Bfield = 0.0;
+	var CouplingConstant = 1;
 
             var s = new Array(Size); 
             for (var i = 0; i < Size; i++){
                 s[i] = new Array(Size);
                 for (var j = 0; j < Size; j++){
                     rand = Math.random()
-                   
-\\if(true){
-\\console.log(rand)
-\\}
                     if(rand <= 0.33){
                         s[i][j] = 1;
                         }
-                    if(rand > 0.33 && rand <= 0.66){
+                    else if(rand > 0.33 && rand <= 0.66){
                         s[i][j] = -1;
                     	}
-                    if(rand > 0.66){
+                    else if(rand > 0.66){
                     	s[i][j] = 0
                     	}	
-                    //colorSquare(i, j);
+                    colorSquare(i, j);
                     }
-                    
                 }
-                
+ simulate();    ///simulate
+      
+    // Simulate function executes a bunch of steps and then schedules another call to itself:
+    function simulate() {
+        if (running) {
+            var T = Number(tempSlider.value);
+            for (var step=0; step<stepsPerFrame; step++) {
+                var i = Math.floor(Math.random()*Size);         // choose a random site
+                var j = Math.floor(Math.random()*Size);
+                var eDiff = deltaU(i, j);
+                if (s[i][j] == 0 && ((eDiff <=0) || (Math.random() < Math.exp(-eDiff/T)))){
+                s[i][j] = new2;
+                colorSquare(i, j);
+                }
+                if ((eDiff <=0) || (Math.random() < Math.exp(-eDiff/T))) {  // Metropolis algorithm
+                    s[i][j] = -flipit;
+                    colorSquare(i, j);
+                }
+            }
+        }
+        window.setTimeout(simulate, 1);     // schedule next animation frame for 1 ms later
+    }
+    
+    // Given a lattice site, compute energy change from hypothetical flip; note pbc:
+    function deltaU(i, j) {
+        var leftS, rightS, topS, bottomS;  // values of neighboring spins
+        if (s[i][j] == 1 || s[i][j] == -1){
+        var pminus = [0,s[i][j]];
+        flipit = pminus[Math.floor(Math.random()*2)];
+        if (i == 0) leftS = s[Size-1][j];   else leftS = s[i-1][j];
+        if (i == Size-1) rightS = s[0][j];  else rightS = s[i+1][j];
+        if (j == 0) topS = s[i][Size-1];    else topS = s[i][j-1];
+        if (j == Size-1) bottomS = s[i][0]; else bottomS = s[i][j+1];
+        return (2.0 * CouplingConstant * flipit * (topS+bottomS+leftS+rightS)+2.0 * flipit * Bfield);
+        }
+        else if (s[i][j] == 0) {
+        var plusminus = [-1,+1];
+        var news = plusminus[Math.floor(Math.random()*2)];
+        new2 = news
+        if (i == 0) leftS = s[Size-1][j];   else leftS = s[i-1][j];
+        if (i == Size-1) rightS = s[0][j];  else rightS = s[i+1][j];
+        if (j == 0) topS = s[i][Size-1];    else topS = s[i][j-1];
+        if (j == Size-1) bottomS = s[i][0]; else bottomS = s[i][j+1];
+        return (2.0 * CouplingConstant * new2 * (topS+bottomS+leftS+rightS)+2.0 * new2 * Bfield);
+    }           
+    }
+    
+           
+function colorSquare(i, j) {
+        if (s[i][j] == 1){
+        	context.fillStyle = '#8000ff'; // purple
+        	}   
+        if (s[i][j] == -1){
+        	context.fillStyle = '#ffffff';     // white
+        	}
+        if (s[i][j] == 0){
+        	context.fillStyle = '#FF0000';	
+        }
+        context.fillRect(i*squareWidth, j*squareWidth, squareWidth, squareWidth);       
+    }                
 //if(true){
 //console.log(s)
 //}
 
+ // Function to start or pause the simulation:
+    function startStop() {
+        running = !running;
+        if (running) {
+            startButton.value = " Pause ";
+        } else {
+            startButton.value = "Resume";
+        }
+    }
+
+    // Function to update the temperature readout:
+    function showTemp() {
+        tempReadout.innerHTML = Number(tempSlider.value).toFixed(2);
+    }
+
 </script>
+</body>    
 </html>
