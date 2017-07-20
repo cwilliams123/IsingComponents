@@ -121,7 +121,7 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
                 </select>
             &nbsp; &nbsp;
             <select id = "algorithmSelect" onchange = "changeAlgorithm()">
-                <option>Metropolis</option>
+                <option>BEG(3 State)</option>
                 <option>BEG(3 State)</option>
                 <option>(none)</option>
             </select>
@@ -233,12 +233,12 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
             
             //algorithm
             algorithmSelect.selectedIndex = 0; //default is metropolis
-            var metropolis;
-            if (algorithmSelect.value == "Metropolis"){
-                metropolis = true;
+            var BEG;
+            if (algorithmSelect.value == "BEG(3 State)"){
+                BEG = true;
                 }
             if (algorithmSelect.value == "BEG(3 State)"){
-                klocal = true;
+                BEG= true;
                 }
             else{
             	stop(); //stops simulation
@@ -264,10 +264,10 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
             var running = false; //true when running
             function colorSquare(i, j) {
         if (s[i][j] == 1){
-        	context.fillStyle = '#FE0105'; // purple
+        	context.fillStyle = '#FE0105'; // yellow
         	}   
         if (s[i][j] == 0){
-        	context.fillStyle = '#000102';     // ehite
+        	context.fillStyle = '#000102';     // black
         	}
         if (s[i][j] == -1){
         	context.fillStyle = '#FEE901';	//red
@@ -289,19 +289,45 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
                 s[i] = new Array(Size);
                 for (var j = 0; j < Size; j++){
                     var randy = Math.random() 
-                    if(randy <= 0.40)
+                    if(randy <= 0.45)
                         s[i][j] = 1;
-                    if(randy >= 0.40 && randy <= 0.60 ){
+                    if(randy >= 0.45 && randy <= 0.55 ){
                         s[i][j] = 0;
                         }
-                    if(randy>0.60){
+                    if(randy>0.55){
                        s[i][j] = -1;
                         }
                     colorSquare(i, j);
                     }
                 }
       
-      
+       upSpin = new Object();
+		   	 downSpin = new Object();
+		   	 zeroSpin = new Object();
+		   	 //var allSpins = new Object();
+		   	 var ups = 0;
+		   	 var downs = 0;
+		   	 var zers = 0
+           		for (var m = 0; m < Size; m++){
+        			for (var n = 0; n < Size; n++){
+      		    		if(s[m][n] > 0){
+                	    	var ordered = [m,n];                        	
+                	    	upSpin[ups] = ordered;
+                	    	ups= ups +1;
+                	    	} 
+                	    else if (s[m][n] < 0) {
+                  			var ordered = [m,n];
+                   			downSpin[downs] = ordered;
+        					downs = downs+1;
+                    			}
+                    	else {
+                    		var ordered = [m,n];
+                    		zeroSpin[zers] = ordered;
+                    		zers = zers+1
+                    		}
+                    	}
+                    	}     			   
+                
       function simulate(){
                 if(running){
                         MetropolisforBEG();
@@ -487,6 +513,11 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
                  
            function changeSettings(settings){
                 changeT();
+                algorithmSelect.selectedIndex = settings[4];
+                sizeSelect.selectedIndex = settings[3];
+                Size = Number(sizeSelect.options[sizeSelect.selectedIndex].text);
+                SquareWidth = canvas.height/Size;
+                 
             }   
             
              function changeSpf(){
@@ -501,6 +532,7 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
                 else
                     zeroT = false;
                }
+               
         </script>
     </body>
 </html>
