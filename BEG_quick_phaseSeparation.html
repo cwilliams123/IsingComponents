@@ -261,13 +261,13 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
             var running = false; //true when running
             function colorSquare(i, j) {
         if (s[i][j] == 1){
-        	context.fillStyle = '#FE0105'; // purple
+        	context.fillStyle = '#ffa7a7'; // beige/red
         	}   
         if (s[i][j] == 0){
-        	context.fillStyle = '#000102';     // ehite
+        	context.fillStyle = '#000102';     // black
         	}
         if (s[i][j] == -1){
-        	context.fillStyle = '#FEE901';	//red
+        	context.fillStyle = '#FEE901';	//yellow
         }
         context.fillRect(i*SquareWidth, j*SquareWidth, SquareWidth, SquareWidth);       
     }                
