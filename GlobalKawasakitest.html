@@ -383,6 +383,7 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                     //var j2 = Math.floor(Math.random()*Size); 
                 	var thisS = s[i1][j1];
                 	var thatS = s[i2][j2];
+                	if(s[i1][j1] != s[i2][j2]){
                     var EdiffforM = deltaUforKawasakiforM(i1, j1, i2, j2);
                     var Ediff = deltaUforKawasaki(i1, j1, i2, j2);
                     if(zeroT){ //to avoid dividing by zero
@@ -412,14 +413,10 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                             Mcurrent += ((2*thisS) + (2*thatS));
                         }
                     }
+                    }
+                    InnerLoopCount++;
                 }
-                // var rem1 = upSpin.indexOf([i1,j1]);
-				// upSpin.splice(rem1, 1);    
-				// downSpin.push(rem1);
-				// var rem2 = downSpin.indexOf([i2,j2]);
-				// downSpin.splice(rem2, 1);    
-				// upSpin.push(rem2);
-                
+          
                 
                 
             
