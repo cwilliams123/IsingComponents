@@ -78,7 +78,7 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                    </tbody>
                </table>
             </div>
-    
+
 
             <p> <b> Nanotube Settings: </b></p>
             <div>Thickness: <input type ="number" id ="nThicknessInput" value = "2" min ="0" max ="150"/> </div>
@@ -407,11 +407,11 @@ var nearestneighs = new Object();
                 for(var step = 0; step <StepsPerLoop; step++){
                     var i1 = Math.floor(Math.random()*Size);
                     var j1 = Math.floor(Math.random()*Size);
-                    dictkey = [i1, j1];
-                    tryit = nearestneighs[dictkey];
-					randtry = tryit[Math.floor(Math.random()*4)];
-                    var i2 = parseInt(randtry[0]);
-                    var j2 = parseInt(randtry[1]); 
+                    var dictkey = [i1, j1];
+                    var tryit = nearestneighs[dictkey];
+		    var randtry = tryit[Math.floor(Math.random()*4)];
+                    var i2 = randtry[0];
+                    var j2 = randtry[1]; 
                     if(s[i1][j1] != s[i2][j2]){
                         var thisS = s[i1][j1];
                         var thatS = s[i2][j2];
@@ -953,7 +953,7 @@ var nearestneighs = new Object();
                 SquareWidth = canvas.width / Size;
                 // Now re-create the spin array, down-sampling from temporary array
                 s = new Array(Size);
-                        BfieldM = new Array(Size);
+                BfieldM = new Array(Size);
                 for (var iNew=0; iNew<Size; iNew++) {
                     s[iNew] = new Array(Size);
                                     BfieldM[iNew] = new Array(Size);
@@ -1475,4 +1475,3 @@ var nearestneighs = new Object();
         </script>
     </body>
 </html>
-
