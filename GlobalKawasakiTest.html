@@ -292,60 +292,7 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                     		}
                     	}     			
                 			
-            
-var nearestneighs = new Object();  
-       
-        for (var m = 0; m < Size; m++){
-                for (var n = 0; n < Size; n++){
-                        var pair = [];
-                        var indexNeighs = [];
-                        var ordered = [m,n];
-                        for(var zz = 0; zz < 4; zz++){
-                        if(zz==0){  //look up
-                        	if (m == 0){
-                        		pair = [Size-1,n];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{pair = [m-1,n];
-                        		indexNeighs.push(pair);
-                        		}
-                        		}
-                        	
-                         if(zz==1){   //look down
-                        	if (m == Size-1){ 
-                        		pair = [0,n];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{
-                        		pair = [m+1,n];	
-                        		indexNeighs.push(pair);
-                        	}
-                        	}
-                        if(zz==2){    //look left
-                        	if (n == 0){ 
-                        		pair = [m,Size-1];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{
-                        		pair = [m,n-1];	
-                        		indexNeighs.push(pair);
-                        	}
-                        	}
-                        	if(zz==3){ //look right
-                        	if (n == Size-1){
-                        		pair = [m,0];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{
-                        		pair = [m,n+1];	
-                        		indexNeighs.push(pair);
-                        	}
-                        	}	
-                        	nearestneighs[[m,n]] = indexNeighs;
-                        	}
-                        		}
-                        		}			
-			
+
 					
            //these will be defined when someone saves a configuration so that the user can easily go back to the initial saved configuration     
             var initS;
@@ -414,10 +361,10 @@ var nearestneighs = new Object();
 //timelap = 0;   
 //t = performance.now();            
         function MetropolisforKawasaki(){
-            //var t0 = performance.now();
+         //   var t0 = performance.now();
                 for(var step = 0; step <StepsPerLoop; step++){
-                	var keyup = Math.floor(Math.random()*ups);
-                	var keydown = Math.floor(Math.random()*downs);
+                	keyup = Math.floor(Math.random()*ups);
+                	keydown = Math.floor(Math.random()*downs);
                 	var randUp= upSpin[keyup];
                 	var randDown= downSpin[keydown];
                 	//console.log(keyup, randUp, keydown, randDown, 'rand1');
@@ -427,44 +374,40 @@ var nearestneighs = new Object();
                     var j2 = randDown[1];
                 	//console.log(thisS,'this', thatS, 'that');
                 	if(s[i1][j1] != s[i2][j2]){
-                		var thisS = s[i1][j1];
-                		var thatS = s[i2][j2];
+                		//var thisS = s[i1][j1];
+                		//var thatS = s[i2][j2];
                     	var EdiffforM = deltaUforKawasakiforM(i1, j1, i2, j2);
                     	var Ediff = deltaUforKawasaki(i1, j1, i2, j2);
                     	if(zeroT){ //to avoid dividing by zero
                            if((EdiffforM < 0.0) || ((EdiffforM == 0) && (Math.random() < .5))){ //always flip if deltaU is negative
-                               thisS *= -1;
-                               s[i1][j1] = thisS;
+                               s[i1][j1] = -s[i1][j1];
                                upSpin[keyup] = [i2,j2];
-                               thatS *= -1;
-                               s[i2][j2] = thatS;
+                               s[i2][j2] = -s[i2][j2];
                                downSpin[keydown]=[i1,j1];
                                colorSquare(i1, j1);
                                colorSquare(i2, j2);
                                Ecurrent += Ediff;
-                               Mcurrent += ((2*thisS) + (2*thatS));
+                               Mcurrent += (((2*(s[i1][j1])))+ (2*(s[i2][j2])));
                            }
                            }
                     else if ((EdiffforM <= 0.0) || (Math.random() < Math.exp((-EdiffforM)/T))){
-                            thisS *= -1;
-                            s[i1][j1] = thisS;
+                            s[i1][j1] = -s[i1][j1];
                             upSpin[keyup] = [i2,j2];
-                            thatS *= -1;
-                            s[i2][j2] = thatS;
+                            s[i2][j2] = -s[i2][j2];
                             downSpin[keydown]=[i1,j1];
                             //console.log(keyup, upSpin[keyup], keydown, downSpin[keydown], 'rand2');
                             colorSquare(i1, j1);
                             colorSquare(i2, j2);
                             Ecurrent += Ediff;
-                            Mcurrent += ((2*thisS) + (2*thatS));
+                            Mcurrent += (((2*(s[i1][j1])))+ (2*(s[i2][j2])));
                         }
                     }
                     }
                     InnerLoopCount++;
-                    //var t1 = performance.now();
-            		//timelap += (t1 - t0);
-              		//readit = timelap/InnerLoopCount
-          	    	//console.log(readit);
+ //                   var t1 = performance.now();
+     //       		timelap += (t1 - t0);
+       //       		readit = timelap/InnerLoopCount
+         // 	    	console.log(readit);
                 }
 
                
