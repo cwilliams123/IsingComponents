@@ -273,9 +273,8 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                			    colorSquare(i, j); 	
                			     	}
                 			}
-             var upSpin = new Object();
-		   	 var downSpin = new Object();
-		   	 //var allSpins = new Object();
+             upSpin = new Object();
+		   	 downSpin = new Object();
 		   	 var ups = 0;
 		   	 var downs = 0;
            		for (var m = 0; m < Size; m++){
@@ -283,19 +282,70 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
       		    		if(s[m][n] > 0){
                 	    	var ordered = [m,n];                        	
                 	    	upSpin[ups] = ordered;
-                	    	//allSpins[m+n] = [ordered,1];
                 	    	ups= ups +1;
                 	    	} 
                 	    	else {
                   			var ordered = [m,n];
                    			downSpin[downs] = ordered;
-                   			//allSpins[m+n] = [ordered,-1];
         					downs = downs+1;
                     			}
                     		}
                     	}     			
                 			
             
+var nearestneighs = new Object();  
+       
+        for (var m = 0; m < Size; m++){
+                for (var n = 0; n < Size; n++){
+                        var pair = [];
+                        var indexNeighs = [];
+                        var ordered = [m,n];
+                        for(var zz = 0; zz < 4; zz++){
+                        if(zz==0){  //look up
+                        	if (m == 0){
+                        		pair = [Size-1,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{pair = [m-1,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        		}
+                        	
+                         if(zz==1){   //look down
+                        	if (m == Size-1){ 
+                        		pair = [0,n];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m+1,n];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}
+                        if(zz==2){    //look left
+                        	if (n == 0){ 
+                        		pair = [m,Size-1];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m,n-1];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}
+                        	if(zz==3){ //look right
+                        	if (n == Size-1){
+                        		pair = [m,0];
+                        		indexNeighs.push(pair);
+                        		}
+                        	else{
+                        		pair = [m,n+1];	
+                        		indexNeighs.push(pair);
+                        	}
+                        	}	
+                        	nearestneighs[[m,n]] = indexNeighs;
+                        	}
+                        		}
+                        		}			
+			
 					
            //these will be defined when someone saves a configuration so that the user can easily go back to the initial saved configuration     
             var initS;
@@ -360,32 +410,28 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
          
         
        
-             
+
+//timelap = 0;   
+//t = performance.now();            
         function MetropolisforKawasaki(){
+            //var t0 = performance.now();
                 for(var step = 0; step <StepsPerLoop; step++){
                 	var keyup = Math.floor(Math.random()*ups);
                 	var keydown = Math.floor(Math.random()*downs);
                 	var randUp= upSpin[keyup];
                 	var randDown= downSpin[keydown];
-                    //if(true){
-                   // console.log('up',Object.keys(upSpin).length);
-                   // }
-                   // if(true){
-                   // console.log('down',Object.keys(downSpin).length);
-                   // }
+                	//console.log(keyup, randUp, keydown, randDown, 'rand1');
         			var i1 = randUp[0];
         			var j1 = randUp[1];
                     var i2 = randDown[0];
                     var j2 = randDown[1];
-                    //var i1 = Math.floor(Math.random()*Size);
-                    //var j1 = Math.floor(Math.random()*Size);
-                    //var i2 = Math.floor(Math.random()*Size);
-                    //var j2 = Math.floor(Math.random()*Size); 
-                	var thisS = s[i1][j1];
-                	var thatS = s[i2][j2];
-                    var EdiffforM = deltaUforKawasakiforM(i1, j1, i2, j2);
-                    var Ediff = deltaUforKawasaki(i1, j1, i2, j2);
-                    if(zeroT){ //to avoid dividing by zero
+                	//console.log(thisS,'this', thatS, 'that');
+                	if(s[i1][j1] != s[i2][j2]){
+                		var thisS = s[i1][j1];
+                		var thatS = s[i2][j2];
+                    	var EdiffforM = deltaUforKawasakiforM(i1, j1, i2, j2);
+                    	var Ediff = deltaUforKawasaki(i1, j1, i2, j2);
+                    	if(zeroT){ //to avoid dividing by zero
                            if((EdiffforM < 0.0) || ((EdiffforM == 0) && (Math.random() < .5))){ //always flip if deltaU is negative
                                thisS *= -1;
                                s[i1][j1] = thisS;
@@ -406,22 +452,22 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                             thatS *= -1;
                             s[i2][j2] = thatS;
                             downSpin[keydown]=[i1,j1];
+                            //console.log(keyup, upSpin[keyup], keydown, downSpin[keydown], 'rand2');
                             colorSquare(i1, j1);
                             colorSquare(i2, j2);
                             Ecurrent += Ediff;
                             Mcurrent += ((2*thisS) + (2*thatS));
                         }
                     }
-                InnerLoopCount++;
+                    }
+                    InnerLoopCount++;
+                    //var t1 = performance.now();
+            		//timelap += (t1 - t0);
+              		//readit = timelap/InnerLoopCount
+          	    	//console.log(readit);
                 }
-                // var rem1 = upSpin.indexOf([i1,j1]);
-				// upSpin.splice(rem1, 1);    
-				// downSpin.push(rem1);
-				// var rem2 = downSpin.indexOf([i2,j2]);
-				// downSpin.splice(rem2, 1);    
-				// upSpin.push(rem2);
-                
-                
+
+               
                 
             
             
@@ -934,10 +980,11 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                 // Now re-create the spin array, down-sampling from temporary array
                 s = new Array(Size);
                 BfieldM = new Array(Size);
-                upSpin = new Object();
-		   	    downSpin = new Object();
+                
+               // upSpin = new Object();
+		   	    //downSpin = new Object();
 		   	  	 	
-                			
+                 			
                     	
                 for (var iNew=0; iNew<Size; iNew++) {
                     s[iNew] = new Array(Size);
