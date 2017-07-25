@@ -285,7 +285,7 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                     }
                 }
                 			          
-var nearestneighs = new Object();  
+nearestneighs = new Object();  
        
         for (var m = 0; m < Size; m++){
                 for (var n = 0; n < Size; n++){
@@ -401,15 +401,16 @@ var nearestneighs = new Object();
             
   
             
-            
-          
+        timelap = 0;   
+         t = performance.now();     
             function MetropolisforKawasakiLocal(){
+                var t0 = performance.now();
                 for(var step = 0; step <StepsPerLoop; step++){
                     var i1 = Math.floor(Math.random()*Size);
                     var j1 = Math.floor(Math.random()*Size);
                     var dictkey = [i1, j1];
                     var tryit = nearestneighs[dictkey];
-		    var randtry = tryit[Math.floor(Math.random()*4)];
+		   			var randtry = tryit[Math.floor(Math.random()*4)];
                     var i2 = randtry[0];
                     var j2 = randtry[1]; 
                     if(s[i1][j1] != s[i2][j2]){
@@ -442,6 +443,10 @@ var nearestneighs = new Object();
                     }
                 }
                 InnerLoopCount++;
+                var t1 = performance.now();
+                timelap += (t1 - t0);
+                readit = timelap/InnerLoopCount
+          	    console.log(readit);
             }
                
             // energy change without local magnetic field
@@ -980,58 +985,7 @@ var nearestneighs = new Object();
                     }
                 }
         
-        nearestneighs = new Object();  
        
-        for (var m = 0; m < Size; m++){
-                for (var n = 0; n < Size; n++){
-                        var pair = [];
-                        var indexNeighs = [];
-                        var ordered = [m,n];
-                        for(var zz = 0; zz < 4; zz++){
-                        if(zz==0){  //look up
-                        	if (m == 0){
-                        		pair = [Size-1,n];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{pair = [m-1,n];
-                        		indexNeighs.push(pair);
-                        		}
-                        		}
-                        	
-                         if(zz==1){   //look down
-                        	if (m == Size-1){ 
-                        		pair = [0,n];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{
-                        		pair = [m+1,n];	
-                        		indexNeighs.push(pair);
-                        	}
-                        	}
-                        if(zz==2){    //look left
-                        	if (n == 0){ 
-                        		pair = [m,Size-1];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{
-                        		pair = [m,n-1];	
-                        		indexNeighs.push(pair);
-                        	}
-                        	}
-                        	if(zz==3){ //look right
-                        	if (n == Size-1){
-                        		pair = [m,0];
-                        		indexNeighs.push(pair);
-                        		}
-                        	else{
-                        		pair = [m,n+1];	
-                        		indexNeighs.push(pair);
-                        	}
-                        	}	
-                        	nearestneighs[[m,n]] = indexNeighs;
-                        	}
-                        		}
-                        		}
                 resetData();
                     
                 if (metropolis)
