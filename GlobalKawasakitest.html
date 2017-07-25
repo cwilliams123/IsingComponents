@@ -361,7 +361,10 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
         
        
              
+timelap = 0;   
+t = performance.now();            
         function MetropolisforKawasaki(){
+           		var t0 = performance.now();
                 for(var step = 0; step <StepsPerLoop; step++){
                 	var keyup = Math.floor(Math.random()*ups);
                 	var keydown = Math.floor(Math.random()*downs);
@@ -415,6 +418,10 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                     }
                     }
                     InnerLoopCount++;
+                    var t1 = performance.now();
+     	      		timelap += (t1 - t0);
+              		readit = timelap/InnerLoopCount
+          	    	console.log(readit);
                 }
           
                 
