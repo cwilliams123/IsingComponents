@@ -425,8 +425,7 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                 var right2 = getRight(i2,j2);
                 var top2 = getTop(i2,j2);
                 var bottom2 = getBottom(i2,j2);
-                
-                if ((j2 == 0 && j1 == Size - 1 && i2 == i1) || (j2 == Size - 1 && j1 == 0 && i2 == i1) || (i2 == 0 && i1 == Size - 1 && j2 == j1)
+               	if ((j2 == 0 && j1 == Size - 1 && i2 == i1) || (j2 == Size - 1 && j1 == 0 && i2 == i1) || (i2 == 0 && i1 == Size - 1 && j2 == j1)
                 || (i2 == Size - 1 && i1 == 0 && j2 == j1)) {
                     if (pbc || ApbcBothDirections || ApbcOneDirection || PlusMinus)
                       return (2.0*CouplingConstant*thisS*(bottom1 + top1 + left1 + right1) + 
@@ -452,6 +451,7 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                 
             }
             
+            
             //energy change with local magnetic field
             function deltaUforKawasakiforM(i1, j1, i2, j2){
                 var thisS = s[i1][j1];
@@ -468,7 +468,7 @@ Much of the HTML5 adaptation of this code comes from that of Dan Schroeder (Webe
                 var bottom2 = getBottom(i2,j2);
                 
                 
-                if (((j2 == j1+1) && i2 == i1) || ((j1 == j2 + 1) && i1 == i2) || ((j2 == j1-1) && (i2 == i1)) 
+               if (((j2 == j1+1) && i2 == i1) || ((j1 == j2 + 1) && i1 == i2) || ((j2 == j1-1) && (i2 == i1)) 
                 || (j1 == j2 - 1 && i1 == i2) || (j2 == j1 && i2 == i1+1) || (j1 == j2 && i1 == i2 + 1) ||
                 (j2 == j1 && i2 == i1-1) || (j1 == j2 && i1 == i2 - 1)){
                     return 2.0*CouplingConstant*thisS*(bottom1 + top1 + left1 + right1) + 2.0*CouplingConstant*thatS*(bottom2 + top2 + left2 + right2) + 4.0*CouplingConstant + 2.0*thisS*(Bfield+BfieldM[i1][j1]) + 2.0*thatS*(Bfield+BfieldM[i2][j2]);
