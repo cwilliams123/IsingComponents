@@ -79,7 +79,7 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
                </table>
             </div>
 
-
+<!--
             <p> <b> Nanotube Settings: </b></p>
             <div>Thickness: <input type ="number" id ="nThicknessInput" value = "2" min ="0" max ="150"/> </div>
             <div>Diameter: <input type ="number" id ="nDiameterInput" value = "15" min ="0" max ="298"/> </div>
@@ -88,11 +88,16 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
                     <option>Positive</option>
                     <option>Negative</option>
                 </select> </div>
-            <div class = "verticalSpace"> <input type="button" value="Create Nanotube" onclick = "makeNanotube()"/> </div>
-            <div> <p id = "molRatioReadout">Mole Ratio: .5 Up and .5 Down</p><input type ="range" min ="0" id ="molRatioSlider" onchange = "changeMolRatio()"/> </div> 
+            <div class = "verticalSpace"> <input type="button" value="Create Nanotube" onclick = "makeNanotube()"/> </div> -->
+
+<div> Percentage for Red Squares <input type="number" id ="redPercentInput" value ="100" min ="0" max ="100" onchange = "changeYellow()"/>%</div>
+            <div> Percentage for Black Squares: <input type ="number" id ="blackPercentInput" value ="0" min ="0" max = "100" onchange ="changeYellow()" />%</div>
+            <div> <p id = "yellowReadout">Percentage for Yellow Squares: 0 % </p></div>
             <div class ="verticalSpace"><input type ="button" value ="Execute Mole Ratio" onclick ="execMolRatio()"/> </div>
             <div><p id = "spfReadout"> Steps Per Frame: 10000</p> <input type ="range" min ="1" max ="7" value = "4" id = "spfSlider" onchange = "changeSpf()"/> </div>
-       </div>
+            
+        </div>
+        
         
         <div class = "verticalSpace">
             Temperature: <input type="number" id ="tempInput" step = "0.01" value ="2.27" onchange = "changeT()" min = "0.0"/>
@@ -181,8 +186,9 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
             var nDiameterInput = document.getElementById("nDiameterInput");
             var nHeightInput = document.getElementById("nHeightInput");
             var nSpinSelect = document.getElementById("nSpinSelect");
-            var molRatioSlider = document.getElementById("molRatioSlider"); //mol = mole
-            var molRatioReadout = document.getElementById("molRatioReadout");
+            var redPercent = document.getElementById("redPercentInput");
+            var blackPercent = document.getElementById("blackPercentInput");
+            var yellowReadout = document.getElementById("yellowReadout")
             var spfReadout = document.getElementById("spfReadout");
             var spfSlider = document.getElementById("spfSlider");
             var tempInput = document.getElementById("tempInput"); 
@@ -195,7 +201,7 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
             var SettleBInput = document.getElementById("SettleB");
             var startButton = document.getElementById("startButton");
             var show = document.getElementById("show"); //for testing purposes
-
+            show.value = "lalala"  
             //data
             var InnerLoopCount = 0; 
             var StepsPerLoop = Math.pow(10, Number(spfSlider.value)); // this*innerLoopCount rounded to the nearest hundredth = steps that are shown 
@@ -228,8 +234,9 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
             sizeSelect.selectedIndex = 9;//default is 100
             var Size = Number(sizeSelect.options[sizeSelect.selectedIndex].text);  // dimensions of lattice
             var SquareWidth = canvas.width/Size; //size of each square determined by size of lattice
-            //var upRatio = 0.0; //for when you use the mol ratio creator slider/button, decimal of "up" spins
-           // changeMolRatioSettings();
+            //
+            //var redRatio = 0.0; //for when you use the mol ratio creator slider/button, decimal of "up" spins
+            
             
             //algorithm
             algorithmSelect.selectedIndex = 0; //default is metropolis
@@ -264,13 +271,13 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
             var running = false; //true when running
             function colorSquare(i, j) {
         if (s[i][j] == 1){
-        	context.fillStyle = '#FE0105'; // yellow
+        	context.fillStyle = '#FE0105'; // red
         	}   
         if (s[i][j] == 0){
         	context.fillStyle = '#000102';     // black
         	}
         if (s[i][j] == -1){
-        	context.fillStyle = '#FEE901';	//red
+        	context.fillStyle = '#FEE901';	//yellow
         }
         context.fillRect(i*SquareWidth, j*SquareWidth, SquareWidth, SquareWidth);       
     }                
@@ -560,6 +567,33 @@ Note I disabled most of the buttons that for modifying setting  (except Temp and
                     zeroT = false;
                }
                
+           function changeYellow(){ //changes display of Percentage of Yellow Squares
+               yellowPercent = 100 - Number(redPercent.value) - Number(blackPercent.value)
+               yellowReadout.innerHTML = "Percentage for Yellow Squares: "+ yellowPercent +" %";
+           }
+               
+           function execMolRatio(){
+                var RPend = Number(redPercent.value); //the column where the red squares will stop
+                var BPend = RPend + Number(blackPercent.value); //column where the black squares will stop
+                for(var i = 0; i < RPend; i++){
+                   for(var j = 0; j< Size; j++){
+                       s[i][j] = 1;
+                       colorSquare(i,j);
+                   }
+               }
+               for(var i = RPend; i < BPend; i++){
+                   for(var j= 0; j<Size; j++){
+                       s[i][j] = 0;
+                       colorSquare(i,j);
+                   }
+               }
+               for(var i = BPend; i < Size; i++){
+                   for(var j= 0; j<Size; j++){
+                       s[i][j] = -1;
+                       colorSquare(i,j);
+                   }
+               }       
+           }     
         </script>
     </body>
 </html>
